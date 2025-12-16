@@ -16,6 +16,11 @@ const NoteForm = ({ onAdd }: NoteFormProps) => {
     }
   };
 
+  // ระบุ Type ของ Event อย่างชัดเจน (Strict Event Typing)
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setText(e.target.value);
+  };
+
   return (
     <div>
       <form onSubmit={handleSubmit}>
@@ -23,7 +28,7 @@ const NoteForm = ({ onAdd }: NoteFormProps) => {
           type="text" 
           placeholder="Add a note" 
           value={text}
-          onChange={(e) => setText(e.target.value)}
+          onChange={handleChange} // ใช้ handle function ที่ระบุ type ชัดเจน
         />
         <button type="submit">Add</button>
       </form>

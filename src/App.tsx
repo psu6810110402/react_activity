@@ -8,11 +8,13 @@ function App() {
   // State เก็บรายการโน้ต (ใช้ Lazy Initialization เพื่อโหลดจาก Local Storage ทันที)
   // ช่วยแก้ปัญหาข้อมูลกระพริบตอนกด Refresh
   const [notes, setNotes] = useState<Note[]>(() => {
-    const saved = localStorage.getItem('notes');
-    if (saved) {
-      return JSON.parse(saved) as Note[];
+    try {
+      const saved = localStorage.getItem('notes');
+      return saved ? (JSON.parse(saved) as Note[]) : [];
+    } catch (err) {
+      // ถ้า parse ผิดพลาด ให้คืนค่าเริ่มต้นเป็น Array ว่าง
+      return [];
     }
-    return []; // ถ้าไม่มีข้อมูล ให้เริ่มด้วย Array ว่าง
   });
 
   // ลบ useEffect ตัวโหลดข้อมูลออกไปแล้ว (เพราะย้ายไปทำใน useState แทน)
@@ -24,17 +26,20 @@ function App() {
 
   // ฟังก์ชันเพิ่มโน้ต
   const addNote = (text: string) => {
+    const trimmed = text.trim();
+    if (!trimmed) return; // หยุดหากข้อความว่างเปล่า
+
     const newNote: Note = {
       id: Date.now(),
-      text,
+      text: trimmed,
     };
-    setNotes([...notes, newNote]);
+    setNotes(prev => [...prev, newNote]);
   }
 
   // ฟังก์ชันลบโน้ต
   const deleteNote = (id: number) => {
     // กรองเอาเฉพาะโน้ตที่ id ไม่ตรงกับที่ส่งมา (ลบตัวที่ id ตรงกันออก)
-    setNotes(notes.filter((note) => note.id !== id));
+    setNotes(prev => prev.filter((note) => note.id !== id));
   };
 
   return (

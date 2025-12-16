@@ -5,13 +5,14 @@ interface NoteFormProps {
   onAdd: (text: string) => void;
 }
 
-const NoteForm = ({ onAdd }: NoteFormProps) => {
+const NoteForm: React.FC<NoteFormProps> = ({ onAdd }) => {
   const [text, setText] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // กันหน้าเว็บรีโหลด
-    if (text.trim()) {
-      onAdd(text); // ส่งค่ากลับไปหา App
+    const trimmed = text.trim();
+    if (trimmed) {
+      onAdd(trimmed); // ส่งค่ากลับไปหา App
       setText('');
     }
   };
@@ -30,7 +31,7 @@ const NoteForm = ({ onAdd }: NoteFormProps) => {
           value={text}
           onChange={handleChange} // ใช้ handle function ที่ระบุ type ชัดเจน
         />
-        <button type="submit">Add</button>
+        <button type="submit" disabled={!text.trim()} aria-disabled={!text.trim()}>Add</button>
       </form>
     </div>
   )
